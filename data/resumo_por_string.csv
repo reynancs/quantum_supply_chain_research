@@ -1,0 +1,31 @@
+﻿string_numero,descricao,artigos_unicos
+1,"""Quantum Machine Learning"" AND ""Supply Chain""",78
+2,"""Quantum Machine Learning"" AND ""Demand Forecasting""",12
+3,"""Quantum Machine Learning"" AND ""Inventory""",27
+4,"""Quantum Machine Learning"" AND ""Logistics""",90
+5,"""Quantum Neural Network"" AND ""Supply Chain""",37
+6,"""Quantum Computing"" AND ""Demand Forecasting""",99
+7,"""Quantum Computing"" AND ""Demand Prediction""",31
+8,"""Hybrid Quantum"" AND ""Supply Chain"" AND ""Prediction""",35
+9,"""Quantum Computing"" AND ""Inventory Control""",31
+15,"""Quantum Reinforcement Learning"" AND ""Inventory""",3
+16,"""Quantum Computing"" AND ""Backorder""",4
+17,"""Quantum Computing"" AND ""Supply Chain Management""",393
+18,"""Quantum Kernel"" AND ""Time Series""",41
+19,"""Quantum Computing"" AND ""Predictive Maintenance"" AND ""Supply Chain""",98
+20,"""Quantum-Inspired"" AND ""Demand Forecasting""",28
+21,"""Quantum Reservoir Computing"" AND ""Time Series""",76
+22,"""Quantum Support Vector Machine"" AND ""Forecasting""",63
+23,"""Quantum Computing"" AND ""Supply Chain Resilience""",30
+24,"""Quantum"" AND ""Inventory Optimization"" AND ""Machine Learning""",15
+25,"""Quantum Machine Learning"" AND ""Classification"" AND ""Supply Chain""",24
+26,"""QAmplifyNet"" AND ""Backorder Prediction""",4
+27,"""Hybrid Quantum Neural Networks"" AND ""Backorder Prediction""",0
+28,"""Hybrid Quantum Neural Networks"" AND ""Supply Chain""",0
+29,"""Quantum"" AND ""Demand Forecasting"" AND ""Supply Chain""",180
+30,"""Quantum"" AND ""Inventory Optimization""",35
+31,"""Quantum"" AND ""Route Optimization"" AND ""Supply Chain""",72
+32,"""Quantum Machine Learning"" AND ""Vehicle Routing""",15
+33,"""Quantum"" AND ""Load Balancing"" AND ""Logistics""",166
+34,"""Quantum"" AND ""Supplier Risk""",9
+35,"""Quantum Computing"" AND ""Supplier Risk Management""",5
