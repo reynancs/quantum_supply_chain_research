@@ -1785,20 +1785,56 @@ def aba_revisao_bibliografica(df_r):
 
     st.caption(f"**{len(df_tab)} artigo(s)** após filtros.")
 
-    colunas_exibir = [
-        "titulo", "autores_completo", "ano", "venue", "tipo_problema_auto",
+    # Ordem final da tabela:
+    #   (1..8) Colunas essenciais reordenadas e renomeadas
+    #   (9+)   Campos da revisao manual na sequencia
+    colunas_principais = [
+        "titulo", "autores_completo", "venue", "tipo_problema_auto",
+        "ano", "citing_works", "citacoes_por_ano", "doi",
+    ]
+    colunas_extras = [
         "revisado", "relevancia_final", "problema_validado",
         "metodo_qml", "baseline_classico", "resultado_qml_vs_classico",
-        "hardware", "citing_works", "doi",
+        "hardware",
     ]
-    colunas_exibir = [c for c in colunas_exibir if c in df_tab.columns]
+    colunas_origem = [c for c in colunas_principais + colunas_extras if c in df_tab.columns]
 
-    df_exibir = df_tab[colunas_exibir].copy()
+    rotulos = {
+        "titulo": "titulo",
+        "autores_completo": "autores",
+        "venue": "Source Title",
+        "tipo_problema_auto": "tipo_problema",
+        "ano": "ano",
+        "citing_works": "citing_works",
+        "citacoes_por_ano": "Citações/Ano",
+        "doi": "doi",
+    }
+
+    df_exibir = df_tab[colunas_origem].rename(columns=rotulos).copy()
     df_exibir["ano"] = df_exibir["ano"].apply(
         lambda x: str(int(x)) if pd.notna(x) else "N/D"
     )
+    if "Citações/Ano" in df_exibir.columns:
+        df_exibir["Citações/Ano"] = pd.to_numeric(
+            df_exibir["Citações/Ano"], errors="coerce"
+        ).round(1)
 
-    st.dataframe(df_exibir.reset_index(drop=True), height=420, use_container_width=True)
+    st.dataframe(
+        df_exibir.reset_index(drop=True),
+        height=420,
+        use_container_width=True,
+        column_config={
+            "Citações/Ano": st.column_config.NumberColumn(
+                width="small",
+                help="Citações ÷ anos desde a publicação — relevância ajustada pela idade do artigo",
+                format="%.1f",
+            ),
+            "Source Title": st.column_config.TextColumn(
+                width="medium",
+                help="Coluna original `Source Title` do Lens.org — periódico, conferência ou editor.",
+            ),
+        },
+    )
 
     # --- Export subset alta ---
     st.markdown("**Exportar corpus de síntese (`relevancia_final = alta`)**")

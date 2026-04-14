@@ -19,6 +19,7 @@ Como usar:
 """
 
 import os
+from datetime import datetime
 import pandas as pd
 
 from openpyxl import Workbook
@@ -103,7 +104,7 @@ COLUNAS_AUTO = [
     "id", "titulo", "autores_completo",
     "ano", "venue", "publication_type",
     "doi", "url",
-    "is_open_access", "citing_works",
+    "is_open_access", "citing_works", "citacoes_por_ano",
     "tipo_problema_auto",
 ]
 
@@ -169,6 +170,15 @@ def montar_tabela(df_elegiveis):
     out["url"] = df_elegiveis["External URL"]
     out["is_open_access"] = df_elegiveis["Is Open Access"]
     out["citing_works"] = df_elegiveis["Citing Works Count"]
+
+    # Metrica ajustada pela idade do artigo: citacoes / anos desde a publicacao.
+    # Corrige vies temporal — artigos recentes com poucas citacoes nao sao
+    # penalizados apenas por serem jovens, e artigos antigos nao dominam por tempo.
+    ano_atual = datetime.now().year
+    anos_desde_pub = (ano_atual - pd.to_numeric(df_elegiveis["Publication Year"], errors="coerce")).clip(lower=1)
+    citacoes = pd.to_numeric(df_elegiveis["Citing Works Count"], errors="coerce").fillna(0)
+    out["citacoes_por_ano"] = (citacoes / anos_desde_pub).round(2)
+
     out["tipo_problema_auto"] = df_elegiveis["tipo_problema"]
 
     # Manuais (vazias)
@@ -244,7 +254,7 @@ def exportar_xlsx(df):
         "id": 22, "titulo": 50, "autores_completo": 40,
         "ano": 8, "venue": 30, "publication_type": 18,
         "doi": 28, "url": 30,
-        "is_open_access": 12, "citing_works": 10,
+        "is_open_access": 12, "citing_works": 10, "citacoes_por_ano": 12,
         "tipo_problema_auto": 22,
         "revisado": 10, "relevancia_final": 14, "problema_validado": 22,
         "metodo_qml": 14, "metodo_qml_detalhe": 30,
