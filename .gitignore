@@ -30,8 +30,9 @@ desktop.ini
 # Claude Code
 .claude/
 
-# AI Skills (arquivo privado)
-.ai/SKILL.md
+# AI Skills / contexto de agentes (privado)
+ai/
+.ai/
 
 # Streamlit
 .streamlit/secrets.toml

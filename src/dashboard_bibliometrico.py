@@ -1816,129 +1816,6 @@ def aba_revisao_bibliografica(df_r):
 
 
 # ============================================================
-# ABA — CONCLUSÕES E PRÓXIMOS PASSOS
-# ============================================================
-# Narrativa de fechamento: consolida o que foi aprendido ate aqui no pipeline
-# PRISMA-ScR e lista o roadmap da revisao bibliografica completa.
-
-def aba_conclusoes(df_dedup, df_triagem, df_revisao):
-    """Síntese dos achados do pipeline e roadmap da revisão bibliográfica."""
-    # --- KPIs de fechamento ---
-    total_bruto = int(df_dedup["total_bruto"].iloc[0]) if df_dedup is not None and "total_bruto" in df_dedup.columns else 0
-    total_unicos = int(df_dedup["total_unico"].iloc[0]) if df_dedup is not None and "total_unico" in df_dedup.columns else 0
-    elegiveis = int((df_triagem["fase2_decisao"] == "incluir").sum()) if "fase2_decisao" in df_triagem.columns else 0
-    revisados = int((df_revisao["revisado"] == "sim").sum()) if "revisado" in df_revisao.columns else 0
-    alta_rel = int((df_revisao["relevancia_final"] == "alta").sum()) if "relevancia_final" in df_revisao.columns else 0
-
-    k1, k2, k3, k4, k5 = st.columns(5)
-    k1.metric("Registros Brutos", f"{total_bruto:,}")
-    k2.metric("Corpus Único", f"{total_unicos:,}")
-    k3.metric("Elegíveis (PRISMA-ScR)", f"{elegiveis:,}")
-    k4.metric("Revisados (Full-Text)", f"{revisados:,}")
-    k5.metric("Alta Relevância", f"{alta_rel:,}")
-    st.divider()
-
-    # --- Conclusões ---
-    st.subheader("📌 Conclusões até o Momento")
-    st.markdown(
-        f"""
-**1. Pipeline PRISMA-ScR automatizado é viável em QML × Supply Chain.**
-A redução de **{total_bruto:,} registros brutos → {total_unicos:,} únicos → {elegiveis:,} elegíveis**
-({100 * elegiveis / max(total_bruto, 1):.1f}% do bruto) demonstra que uma triagem por regras
-(CE-1 a CE-5) aplicada a título + abstract + Fields of Study consegue isolar o escopo temático
-com **precisão estimada ~90%+** após 5 iterações de refinamento.
-
-**2. O gargalo da literatura QML é a contaminação cross-domain.**
-O critério CE-3 (domínio fora de escopo) — em suas duas variantes (padrão e forte) — foi
-responsável por **51% das exclusões**. O campo QML atrai pesquisadores de física, saúde, finanças
-e energia que reutilizam as mesmas arquiteturas (QNN, VQC, QSVM) em problemas distintos. Sem
-a filtragem agressiva por domínio, o corpus seria dominado por trabalhos fora de supply chain.
-
-**3. A qualidade das strings de busca pesa mais que a sofisticação do filtro.**
-A remoção das strings #10–#14 (Iter. 2) cortou o corpus pela metade com perda mínima de
-relevantes — um único ajuste na fonte superou várias rodadas de tuning dos critérios de exclusão.
-Lição: **investir na construção da string antes de sofisticar a triagem**.
-
-**4. Loops humano-no-processo são indispensáveis.**
-As Iterações 4 e 5 mostram que a inspeção manual de amostras detecta padrões de falsos positivos
-que o protocolo inicial não antecipa (ex.: LNG, farmácia, química quântica, comunicação quântica,
-COVID, manutenção veicular). A realimentação das keywords nas listas de exclusão elevou a precisão
-de ~80% para ~90%+ em duas passadas.
-
-**5. O núcleo CI-2 está identificado e é compacto.**
-Dos {elegiveis:,} elegíveis, **53 artigos (20,3%)** concentram o alvo primário da pesquisa
-(backorder prediction, demand forecasting, inventory control). Essa densidade é **positiva** —
-um corpus enxuto e bem caracterizado permite uma revisão bibliográfica profunda dentro do prazo
-do mestrado, sem sacrificar cobertura.
-
-**6. O dashboard é a fonte única de verdade do progresso.**
-A integração direta com `tabela_revisao_bibliografica.xlsx` (via `mtime` como cache-key)
-permite que o preenchimento manual da revisão apareça ao vivo no dashboard, fechando o
-ciclo extração → análise → comunicação.
-"""
-    )
-    st.divider()
-
-    # --- Próximos Passos ---
-    st.subheader("🚀 Próximos Passos")
-    st.markdown(
-        """
-**Revisão Bibliográfica**
-
-1. **Full-text review dos 261 elegíveis**, em ordem de prioridade por `tipo_problema`
-
-2. **Preenchimento da planilha `tabela_revisao_bibliografica.xlsx`**
-
-3. **Validação da classificação automática** (`tipo_problema_auto` vs. `problema_validado`) —
-   calcular concordância final e reportar no dashboard como métrica de qualidade do classificador.
-
-**Síntese e Análise**
-
-4. **Consolidação do corpus de síntese** (`relevancia_final = alta`) — exportar via botão
-   do dashboard e produzir a tabela final do artigo/dissertação.
-
-5. **Análise comparativa QML vs. Clássico** por tipo de problema:
-   - Agregação de métricas (`diferenca_percentual`) por `metodo_qml`, `hardware`, `dataset_tamanho`.
-   - Identificação de padrões: quando QML supera clássico? (número de qubits, tamanho de dataset, regime NISQ vs. fault-tolerant).
-
-6. **Mapeamento de lacunas de pesquisa** — cruzar `tipo_problema` × `metodo_qml` ×
-   `resultado_qml_vs_classico` para identificar combinações sub-representadas que justifiquem
-   contribuição original.
-
-**Prototipação**
-
-7. **Prova-de-conceito em tema á ser definido** — implementar baseline clássico (XGBoost/LightGBM)
-   + pipeline QML (QSVM ou VQC) em um dataset público (Kaggle Back Order / UCI Online Retail)
-   e comparar métricas sob constraints NISQ (≤ 20 qubits, ruído real).
-
-8. **Redação do artigo de revisão sistemática** seguindo o template PRISMA-ScR
-   (checklist completo + diagrama de fluxo atualizado + tabela de síntese).
-
-9. **Publicação do dashboard como artefato reproduzível** — README com instruções de execução,
-   dependências fixadas (`requirements.txt` / `pyproject.toml`), exemplos dos CSVs de entrada.
-"""
-    )
-    st.divider()
-
-    # --- Riscos e Pontos de Atenção ---
-    st.subheader("⚠️ Riscos e Pontos de Atenção")
-    st.markdown(
-        """
-- **Falsos positivos residuais na triagem.** Apesar da precisão estimada de ~90%+, ~26 artigos dos 261
-  ainda podem ser fora de escopo. Serão filtrados no full-text review via `relevancia_final = excluir`.
-- **Falsos negativos não observáveis.** Artigos descartados nas fases 1/2 não são auditáveis em massa;
-  risco mitigado pelas 5 iterações e pela lista `palavras_dominio_manter` (safety net).
-- **Viés de idioma.** A triagem e as strings são em inglês — trabalhos relevantes em chinês/alemão/etc.
-  que o Lens.org indexa podem estar sub-representados.
-- **Viés de recência de citações.** Artigos recentes têm poucas citações por falta de tempo, não por falta
-  de relevância — mitigado pela métrica `Citações/Ano` já presente no dashboard.
-- **Drift do escopo NISQ.** Hardware quântico evolui rapidamente; resultados publicados em 2021–2022
-  podem estar obsoletos em 2026 (mais qubits, menos ruído). Tratar como contexto histórico na síntese.
-"""
-    )
-
-
-# ============================================================
 # ABA — HOME (VISÃO DO PIPELINE)
 # ============================================================
 # Storytelling de entrada: funil macro da pesquisa em um unico visual.
@@ -2133,7 +2010,6 @@ def main():
         "📚 Análise Bibliométrica",
         "✅ Triagem PRISMA-ScR",
         "📖 Revisão Bibliográfica",
-        "🎯 Conclusões & Próximos Passos",
     ]
     aba_ativa = st.radio(
         "Navegação", ABAS, horizontal=True, key="aba_ativa", label_visibility="collapsed",
@@ -2180,9 +2056,6 @@ def main():
         exibir_kpis_revisao(df_revisao)
         st.divider()
         aba_revisao_bibliografica(df_revisao)
-
-    elif aba_ativa == ABAS[6]:
-        aba_conclusoes(df_dedup, df_triagem, df_revisao)
 
 
 # Ponto de entrada: so executa quando o script e rodado diretamente

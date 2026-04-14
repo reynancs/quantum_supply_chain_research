@@ -1,154 +1,239 @@
-# Computação Quântica Aplicada ao TSP em Logística
+# Quantum Machine Learning Aplicado a Supply Chain e Inventário — Revisão Bibliográfica Sistemática
 
-Pesquisa acadêmica sobre a aplicação de algoritmos de Computação Quântica ao Problema do Caixeiro Viajante (Traveling Salesman Problem — TSP) e suas variantes, com foco em Logística.
+Revisão bibliográfica sistemática seguindo o protocolo **PRISMA-ScR** (Preferred Reporting Items for Systematic reviews and Meta-Analyses extension for Scoping Reviews) sobre a aplicação de **Quantum Machine Learning (QML)** a problemas de Supply Chain Management, com foco em **predição de backorder**, **previsão de demanda** e **controle de inventário**.
 
-**Programa**: Mestrado Profissional em Gestão de Tecnologia e Inovação — SENAI CIMATEC
-
----
-
-## Contexto do Problema
-
-O Problema do Caixeiro Viajante (TSP) é um dos problemas clássicos de otimização combinatória: dado um conjunto de cidades e as distâncias entre elas, encontrar a rota mais curta que visite todas as cidades exatamente uma vez e retorne à cidade de origem. O problema é NP-difícil, o que significa que o tempo de resolução cresce exponencialmente com o número de cidades em algoritmos clássicos exatos.
-
-Na logística, o TSP e suas variantes (VRP — Vehicle Routing Problem, CVRP, TSPTW) são fundamentais para otimização de rotas de entrega, distribuição e transporte. Com o avanço da computação quântica, novos paradigmas computacionais — como Quantum Annealing (D-Wave), algoritmos variacionais gate-based (QAOA, VQE) e abordagens híbridas — oferecem potencial para resolver instâncias maiores do TSP de forma mais eficiente.
-
-## Objetivo
-
-Construir um artigo técnico-científico que mapeie, analise e compare os algoritmos quânticos aplicados ao TSP e variantes em contextos logísticos, identificando:
-
-- O estado-da-arte dos algoritmos quânticos para otimização combinatória
-- Gaps de pesquisa e oportunidades de contribuição original
-- Tendências tecnológicas (hardware, simuladores, abordagens híbridas)
-- Aplicabilidade prática em cenários logísticos reais
-
-## Fases do Projeto
-
-| Fase | Descrição | Status |
-|------|-----------|--------|
-| 1 | Exploração Bibliográfica | Concluída |
-| 2 | Fundamentação Teórica | Pendente |
-| 3 | Metodologia | Pendente |
-| 4 | Resultados e Discussão | Pendente |
-| 5 | Montagem Final do Artigo | Pendente |
-
-## Fase 1 — Exploração Bibliográfica
-
-### Como foi estruturada a revisão
-
-A pesquisa bibliográfica foi estruturada em **3 eixos temáticos** combinados com operadores booleanos:
-
-| Eixo | Foco | Exemplos |
-|------|------|----------|
-| Problema | TSP e variantes | "Traveling Salesman Problem", "Vehicle Routing", "Combinatorial Optimization" |
-| Tecnologia | Computação quântica | "Quantum Computing", "Quantum Annealing", "QAOA", "VQE", "QUBO" |
-| Aplicação | Logística | "Logistics", "Supply Chain Management", "Route Optimization" |
-
-Foram construídas **25 strings de busca** classificadas em 3 níveis de prioridade (Alta, Média, Baixa) e executadas no Lens.org.
-
-### Passo a passo da pesquisa
-
-1. **Definição de eixos e strings**: 16 strings originais + 10 derivadas da análise do artigo de referência (Phillipson, 2025)
-2. **Execução das buscas**: 25 strings no Lens.org com filtro "Scholarly Works" → 5.320 resultados brutos
-3. **Exportação**: 25 arquivos CSV exportados para `data/export_lens/`
-4. **Deduplicação**: Script Python removeu duplicatas por DOI e título → **3.696 artigos únicos**
-5. **Análise bibliométrica**: Geração de 9 gráficos estáticos + dashboard interativo Streamlit
-
-### Resultados
-
-- **3.696 artigos únicos** após deduplicação (taxa de sobreposição: 30,5%)
-- **61,7% publicados a partir de 2020** — campo em crescimento acelerado
-- **82,8% em Open Access** — alta acessibilidade
-- **49 países** representados, **1.409 fontes** distintas
-- **136.407 citações** totais, média de 36,9 por artigo
-
-### Principais Insights
-
-1. **Quantum Annealing domina** a literatura (~800+ artigos), enquanto QAOA/VQE são nicho (~150 artigos) — gap de pesquisa significativo
-2. **Abordagens híbridas** (quântico + clássico) são padrão, não exceção
-3. **Áreas emergentes pouco publicadas**: QRL (21 artigos), CVRP+QA (18), QML+Supply Chain (79)
-4. **Quantum-Inspired** é uma tendência relevante (182 artigos)
-5. **81,1% dos artigos** aparecem em apenas 1 string — as buscas são complementares
-
-> O relatório completo da Fase 1 está em [`artefatos/resumo_pesquisa_bibliografica.md`](artefatos/resumo_pesquisa_bibliografica.md)
+**Programa:** Mestrado Profissional em Gestão de Tecnologia e Inovação — SENAI CIMATEC
+**Status:** Fase 1 (Exploração Bibliográfica) concluída · Fase 2 (Full-text Review) em andamento
 
 ---
 
-## Estrutura do Projeto
+## 1. Contexto e Motivação
+
+A gestão de supply chain envolve decisões sob incerteza em múltiplas dimensões — demanda volátil, lead-times variáveis, restrições de capacidade, e risco de ruptura (*backorder*/*stockout*). Modelos clássicos de Machine Learning (XGBoost, LSTM, Random Forest) dominam o estado-da-arte em previsão de demanda e classificação de risco de ruptura, mas enfrentam limites de escalabilidade e representação em regimes de alta dimensionalidade ou forte correlação não-linear entre features.
+
+**Quantum Machine Learning (QML)** — arquiteturas como *Quantum Neural Networks* (QNN), *Variational Quantum Classifiers* (VQC), *Quantum Support Vector Machines* (QSVM), *Quantum Kernels* e *Quantum Reinforcement Learning* (QRL) — propõe-se a explorar espaços de Hilbert de dimensionalidade exponencial para codificação de features e cálculo de kernels, oferecendo potencial *speedup* e capacidade representacional adicional mesmo no regime atual de *Noisy Intermediate-Scale Quantum* (NISQ).
+
+Esta revisão mapeia o estado-da-arte da interseção **QML × Supply Chain / Inventory Management**, identificando lacunas que possam justificar contribuição original da dissertação.
+
+---
+
+## 2. Objetivos
+
+### Objetivo geral
+Mapear, caracterizar e sintetizar a literatura que aplica QML a problemas de supply chain — com ênfase em previsão de demanda, controle de inventário e predição de backorder — e identificar oportunidades de pesquisa original.
+
+### Objetivos específicos
+1. Construir um corpus bibliográfico reprodutível a partir da base Lens.org via 35 *search strings* booleanas.
+2. Aplicar triagem automatizada em duas fases (metadados + abstract) seguindo PRISMA-ScR, com critérios de exclusão (CE-1 a CE-5) explícitos.
+3. Classificar automaticamente os artigos elegíveis em 13 categorias de `tipo_problema`.
+4. Realizar *full-text review* dos elegíveis para extração estruturada (método QML, baseline clássico, dataset, métricas, hardware, resultado).
+5. Publicar um **dashboard Streamlit** como artefato reproduzível que documente todo o pipeline e permita exploração interativa do corpus em cada etapa.
+
+---
+
+## 3. Pipeline da Pesquisa
 
 ```
-quantum_tsp_research/
-│
-├── README.md                          # Este arquivo
-├── requirements.txt                   # Dependências Python
-├── .gitignore                         # Arquivos ignorados pelo Git
-│
-├── .ai/                               # Configurações e guias de IA
-│   ├── SKILL.md                       # Guia de workflow do projeto (privado)
-│   ├── algorithms_reference.md        # Taxonomia de 40+ algoritmos quânticos
-│   ├── keywords_guide.md              # 26 strings de busca validadas
-│   └── writing_style.md              # Guia de estilo acadêmico ABNT/IEEE
-│
-├── src/                               # Scripts Python
-│   ├── deduplicar_artigos.py          # Deduplicação dos CSVs do Lens.org
-│   ├── analise_bibliometrica.py       # Análise estática (gera gráficos PNG)
-│   ├── dashboard_bibliometrico.py     # Dashboard interativo Streamlit
-│   └── analysis_template.py           # Template para Fase 4 (artigos classificados)
-│
-├── data/                              # Dados processados
-│   ├── exportacoes_lens/              # 26 CSVs exportados do Lens.org
-│   ├── artigos_unicos.csv             # 3.696 artigos após deduplicação
-│   ├── resumo_deduplicacao.csv        # Estatísticas de deduplicação
-│   ├── resumo_por_string.csv          # Contagem por string de busca
-│   ├── base_algoritmos_abordagens.csv # 38 algoritmos/abordagens compilados
-│   └── resultados_bibliometria/       # Gráficos PNG da análise estática
-│
-├── artefatos/                         # Entregas e relatórios
-│   ├── resumo_pesquisa_bibliografica.md  # Relatório da Fase 1 (entrega)
-│   └── resumo_algoritmos.md           # Resumo de ~80 artigos (Phillipson, 2025)
-│
-└── docs/                              # Documentos de apoio
-    ├── selecao_artigos.txt            # Recomendações de implementação
-    ├── pesquisa_palavras_chave_tsp_quantico.xlsx
-    ├── selecao_abordagens_tsp_vrp.xlsx
-    ├── tabela_resumo_tsp.xlsx
-    └── referencia_bibliografica/       # Artigo de referência (Phillipson, 2025)
+ Extração Lens.org           Deduplicação              Análise                Triagem                Revisão
+ (35 strings)          →    (DOI + Título)        →   Bibliométrica    →    PRISMA-ScR       →    Bibliográfica
+ ─────────────              ─────────────             ────────────          ────────────           ────────────
+ 3.774 registros            2.471 únicos              Perfil do              1.231 → 261            261 artigos
+ brutos                     (1.303 removidos)         corpus                 elegíveis              full-text review
 ```
 
-## Como Usar
+| Etapa | Entrada | Saída | Script | CSV |
+|---|---|---|---|---|
+| 0. Busca | 35 *search strings* no Lens.org | 35 CSVs brutos (`string-NN.csv`) | — | `data/export_lens/` |
+| 1. Deduplicação | 3.774 brutos | 2.471 únicos | `src/deduplicar_artigos.py` | `artigos_unicos.csv`, `resumo_deduplicacao.csv` |
+| 2. Bibliometria | 2.471 únicos | Perfil agregado (produção, impacto, temas) | `src/analise_bibliometrica.py` | `data/resultados_bibliometria/` |
+| 3. Triagem PRISMA | 1.231 únicos (após remoção de strings ruidosas) | 261 elegíveis | `src/triagem_artigos.py` + `src/classificar_problema.py` | `artigos_unicos_triagem.csv` |
+| 4. Revisão | 261 elegíveis | Extração manual | `src/gerar_tabela_revisao.py` (geração) + preenchimento manual | `tabela_revisao_bibliografica.xlsx` |
 
-### Pré-requisitos
+---
 
-- Python 3.10+
-- Bibliotecas: `pandas`, `matplotlib`, `plotly`, `streamlit`, `wordcloud`
+## 4. Critérios de Exclusão (PRISMA-ScR)
 
-### Dashboard Interativo
+| Código | Critério | Fase | Descrição |
+|---|---|---|---|
+| **CE-1** | Otimização quântica pura | 1 e 2 | Artigos de otimização combinatória (QAOA, QA) sem componente de ML. |
+| **CE-2** | Apenas trabalho futuro | 2 | QML mencionado apenas na seção de *future work*, sem experimento. |
+| **CE-3** | Domínio fora de escopo | 1 e 2 | Domínios não-supply-chain (medical imaging, drug discovery, finance, etc.) **com safety net** — revogado se texto também mencionar SC/logística/inventário. |
+| **CE-3 (forte)** | Domínio claro no título | 1 | *Hard excludes* no título (blockchain, patent review, nanotechnology, women in quantum, drug-target, road traffic, etc.). **Sem safety net** — não é revogado por menção a supply chain. |
+| **CE-5** | Tipo de publicação não-substantivo | 1 | Editorials, posters, erratum, *book reviews*. |
+
+**Refinamento iterativo (5 iterações):** Iter. 1 original (~27% precisão) → Iter. 2 remoção das strings #10–#14 (~58%) → Iter. 3 dedup cross-DOI (~80%) → Iter. 4 CE-3 forte (~88%) → Iter. 5 revisão manual (~90%+).
+
+---
+
+## 5. Dashboard Interativo
+
+O dashboard Streamlit é a **interface principal** de exploração do corpus e documentação viva do pipeline. Organizado em 7 abas narrativas que seguem a lógica do processo de pesquisa:
+
+1. **🏠 Pipeline** — Funil macro (3.774 → 2.471 → 261 → N revisados) + KPIs globais.
+2. **🔎 Estratégia de Busca** — Volume por string, heatmap 35×35 de co-ocorrência, tabela de referência das strings.
+3. **🧹 Deduplicação** — KPIs, mini-funil, detalhamento das remoções (DOI, título, cross-DOI).
+4. **📚 Análise Bibliométrica** — Produção temporal, tipos de publicação, Open Access, Top 20 mais citados (com *Citações/Ano* ajustado), Top 30 Fields of Study, leaderboard por *Citações/Ano*, WordCloud de keywords.
+5. **✅ Triagem PRISMA-ScR** — Funil de 3 estágios, exclusões por critério (CE-1 a CE-5), evolução das 5 iterações (dual-axis), distribuição por `tipo_problema`, tabela filtrável dos elegíveis.
+6. **📖 Revisão Bibliográfica** — Progresso do preenchimento manual, síntese por `relevancia_final` / `metodo_qml` / `hardware`, heatmap de concordância `tipo_problema_auto` × `problema_validado`, tabela com filtros por revisão e exportação do corpus de alta relevância.
+7. **🎯 Conclusões & Próximos Passos** — Síntese dos achados e roadmap da pesquisa.
+
+### Executar localmente
 
 ```bash
+# 1. Instalar dependências
+pip install -r requirements.txt
+
+# 2. Rodar o dashboard
 streamlit run src/dashboard_bibliometrico.py
 ```
 
-Acesse `http://localhost:8501` no navegador. O dashboard oferece:
+O dashboard fica disponível em `http://localhost:8501`.
 
-- **7 abas**: Visão Geral, Fontes e Autores, Impacto e Citações, Campos de Estudo, Geografia, Strings de Busca, Algoritmos e Abordagens
-- **Filtros dinâmicos**: Período, tipo de publicação, string de busca, prioridade, Open Access, citações mínimas
-- **16+ gráficos interativos**: stacked bars, donut charts, bubble charts, treemaps, nuvem de palavras, mapa choropleth, heatmap de coocorrência
+### Integração ao vivo com a planilha de revisão
 
-### Análise Estática (gráficos PNG)
+A aba **Revisão Bibliográfica** lê diretamente `data/tabela_revisao_bibliografica.xlsx`. O `mtime` (file modification time) do arquivo é usado como chave do cache Streamlit — **basta salvar a planilha no Excel e recarregar (`R`) o dashboard** para ver os novos preenchimentos. Não é necessário limpar cache manualmente.
 
-```bash
-python src/analise_bibliometrica.py
+---
+
+## 6. Estrutura do Repositório
+
+```
+quantum_inventory_qml_research/
+├── README.md                                  Este arquivo
+├── requirements.txt                           Dependências Python
+│
+├── data/                                      Dados da pesquisa
+│   ├── export_lens/                           35 CSVs brutos do Lens.org (string-01..35.csv)
+│   ├── artigos_unicos.csv                     2.471 artigos pós-deduplicação
+│   ├── artigos_unicos_triagem.csv             2.471 artigos com decisões PRISMA-ScR
+│   ├── resumo_deduplicacao.csv                KPIs da deduplicação
+│   ├── resumo_por_string.csv                  35 strings com código, descrição e volume
+│   ├── tabela_revisao_bibliografica.xlsx      Planilha viva da revisão manual (fonte de verdade)
+│   └── resultados_bibliometria/               Outputs agregados da análise bibliométrica
+│
+├── src/                                       Código-fonte
+│   ├── deduplicar_artigos.py                  Etapa 1 — Deduplicação (DOI → título → cross-DOI)
+│   ├── analise_bibliometrica.py               Etapa 2 — Análise bibliométrica agregada
+│   ├── triagem_artigos.py                     Etapa 3 — Triagem PRISMA-ScR (Fase 1 + Fase 2)
+│   ├── classificar_problema.py                Etapa 3 — Classificação em 13 tipos_problema
+│   ├── gerar_tabela_revisao.py                Etapa 4 — Gera planilha inicial da revisão
+│   └── dashboard_bibliometrico.py             Dashboard Streamlit (7 abas)
+│
+├── docs/                                      Documentação e protocolos
+│   ├── protocolo_triagem.md                   Protocolo detalhado da triagem PRISMA-ScR
+│   ├── protocolo_revisao_bibliografica.md     Protocolo da extração manual (full-text)
+│   ├── resumo_triagem_artigos.md              Resumo estatístico das 5 iterações
+│   ├── resumo_pesquisa_bibliografica.md       Narrativa metodológica geral
+│   ├── diagrama_prisma_scr.md                 Diagrama PRISMA-ScR em Mermaid
+│   ├── pesquisa_palavras_chave_inventory_qml.xlsx   Planilha de construção das 35 strings
+│   └── referencia_bibliografica/              PDFs dos artigos lidos
+│
+├── ai/                                        Contexto para agentes de IA (Skills)
+│   ├── SKILL.md                               Definição da skill quantum-tsp-research
+│   ├── algorithms_reference.md                Referência de algoritmos QML
+│   ├── keywords_guide.md                      Guia de keywords por domínio
+│   └── writing_style.md                       Estilo de redação científica
+│
+└── artefatos/                                 Outputs de análise
+    └── resultados_bibliografia/               Tabelas e gráficos exportados
 ```
 
-Gera 9 gráficos em `data/resultados_bibliometria/`.
+---
 
-### Reprocessar Deduplicação
+## 7. Stack Técnica
+
+- **Python 3.11+**
+- **Streamlit 1.30+** — dashboard interativo
+- **pandas 2.0+**, **numpy 1.24+** — manipulação de dados
+- **Plotly 5.18+** — visualizações interativas
+- **wordcloud + matplotlib** — nuvem de palavras
+- **openpyxl 3.1+** — leitura/escrita de XLSX
+- **Lens.org** — base bibliográfica de origem (registros acadêmicos + patentes)
+
+---
+
+## 8. Reprodutibilidade
+
+Para reproduzir o pipeline completo do zero a partir dos CSVs brutos:
 
 ```bash
+# 1. Deduplicação (35 CSVs brutos → artigos_unicos.csv)
 python src/deduplicar_artigos.py
+
+# 2. Análise bibliométrica (artigos_unicos.csv → resultados_bibliometria/)
+python src/analise_bibliometrica.py
+
+# 3. Triagem PRISMA-ScR (artigos_unicos.csv → artigos_unicos_triagem.csv)
+python src/triagem_artigos.py
+
+# 4. Classificação por tipo de problema (atualiza artigos_unicos_triagem.csv)
+python src/classificar_problema.py
+
+# 5. Geração da planilha de revisão (primeira vez apenas)
+python src/gerar_tabela_revisao.py
+
+# 6. Dashboard
+streamlit run src/dashboard_bibliometrico.py
 ```
 
-Lê os CSVs de `data/exportacoes_lens/` e gera `data/artigos_unicos.csv`.
+Todos os scripts são idempotentes e podem ser executados independentemente — cada um consome um CSV/XLSX de entrada e produz um CSV/XLSX de saída determinístico.
 
-## Referência Principal
+---
 
-> Phillipson, F. (2025). *Quantum Computing in Logistics and Supply Chain Management — An Overview*. Maastricht University / TNO.
+## 9. Resultados Parciais (Fase 1)
+
+- **3.774 registros brutos** extraídos do Lens.org via 35 *search strings*.
+- **2.471 artigos únicos** após deduplicação (DOI + título + cross-DOI).
+- **1.303 duplicatas** removidas (~34,5% de sobreposição entre strings).
+- **1.231 artigos** pós-remoção das strings #10–#14 (Iter. 2).
+- **261 elegíveis** (21,2% do corpus refinado) após triagem PRISMA-ScR em 2 fases.
+- **Precisão estimada ~90%+** do corpus elegível (verificada por inspeção manual).
+- **53 artigos no núcleo CI-2** (backorder prediction + demand forecasting + inventory control) — 20,3% dos elegíveis.
+
+Os detalhes quantitativos de cada etapa estão em `docs/resumo_triagem_artigos.md` e são visualizáveis interativamente no dashboard.
+
+---
+
+## 10. Próximos Passos
+
+**Curto prazo (4 semanas)** — Revisão Bibliográfica
+1. Full-text review dos 261 elegíveis, priorizando núcleo CI-2.
+2. Preenchimento de `tabela_revisao_bibliografica.xlsx` conforme protocolo.
+3. Validação do classificador automático (`tipo_problema_auto` × `problema_validado`).
+
+**Médio prazo (2–3 meses)** — Síntese e Análise
+4. Consolidação do corpus de síntese (`relevancia_final = alta`).
+5. Análise comparativa QML × Clássico por tipo de problema.
+6. Mapeamento de lacunas de pesquisa (cruzamento `tipo_problema × metodo_qml × resultado`).
+
+**Longo prazo** — Experimentação e Redação
+7. Prova-de-conceito em backorder prediction (baseline clássico + pipeline QML NISQ).
+8. Redação do artigo de revisão sistemática PRISMA-ScR.
+9. Publicação do dashboard como artefato reproduzível.
+
+---
+
+## 11. Autor e Orientação
+
+**Autor:** Reynan Cardoso Souza
+**Programa:** Mestrado Profissional em Gestão de Tecnologia e Inovação
+**Instituição:** SENAI CIMATEC
+**Ano:** 2025–2026
+**Linha de pesquisa:** Computação Quântica aplicada à Indústria 4.0 — Quantum Machine Learning para Supply Chain Management
+
+---
+
+## 12. Licença e Citação
+
+Projeto acadêmico. Para citar este trabalho (formato BibTeX provisório):
+
+```bibtex
+@misc{souza2026qml-supply-chain,
+  author = {Souza, Reynan Cardoso},
+  title  = {Quantum Machine Learning Aplicado a Supply Chain e Inventário:
+            Revisão Bibliográfica Sistemática PRISMA-ScR},
+  year   = {2026},
+  note   = {Mestrado Profissional — SENAI CIMATEC},
+  howpublished = {\url{https://github.com/reynancs/quantum_supply_chain_research}}
+}
+```
