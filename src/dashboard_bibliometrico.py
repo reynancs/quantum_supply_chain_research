@@ -1789,7 +1789,8 @@ def aba_revisao_bibliografica(df_r):
     #   (1..8) Colunas essenciais reordenadas e renomeadas
     #   (9+)   Campos da revisao manual na sequencia
     colunas_principais = [
-        "titulo", "autores_completo", "venue", "tipo_problema_auto",
+        "titulo", "publication_type", "fields_of_study", "abstract",
+        "autores_completo", "source_title", "tipo_problema_auto",
         "ano", "citing_works", "citacoes_por_ano", "doi",
     ]
     colunas_extras = [
@@ -1801,8 +1802,11 @@ def aba_revisao_bibliografica(df_r):
 
     rotulos = {
         "titulo": "titulo",
+        "publication_type": "Publication Type",
+        "fields_of_study": "Fields of Study",
+        "abstract": "Abstract",
         "autores_completo": "autores",
-        "venue": "Source Title",
+        "source_title": "Source Title",
         "tipo_problema_auto": "tipo_problema",
         "ano": "ano",
         "citing_works": "citing_works",

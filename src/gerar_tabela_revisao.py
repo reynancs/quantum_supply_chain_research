@@ -101,8 +101,13 @@ CORES_TIPO_PROBLEMA = {
 #        resultados (manual) -> hardware (manual) -> sintese (manual)
 
 COLUNAS_AUTO = [
-    "id", "titulo", "autores_completo",
-    "ano", "venue", "publication_type",
+    "id", "titulo",
+    # Metadados exibidos proximos ao titulo para apoiar a selecao manual
+    # de artigos para leitura de texto completo (tipo de publicacao,
+    # campo de estudo e abstract sao os sinais mais usados nessa decisao).
+    "publication_type", "fields_of_study", "abstract",
+    "autores_completo",
+    "ano", "source_title",
     "doi", "url",
     "is_open_access", "citing_works", "citacoes_por_ano",
     "tipo_problema_auto",
@@ -162,10 +167,12 @@ def montar_tabela(df_elegiveis):
     # Auto-preenchidas
     out["id"] = df_elegiveis["Lens ID"]
     out["titulo"] = df_elegiveis["Title"]
+    out["publication_type"] = df_elegiveis["Publication Type"]
+    out["fields_of_study"] = df_elegiveis["Fields of Study"]
+    out["abstract"] = df_elegiveis["Abstract"]
     out["autores_completo"] = df_elegiveis["Author/s"]
     out["ano"] = df_elegiveis["Publication Year"]
-    out["venue"] = df_elegiveis["Source Title"]
-    out["publication_type"] = df_elegiveis["Publication Type"]
+    out["source_title"] = df_elegiveis["Source Title"]
     out["doi"] = df_elegiveis["DOI"]
     out["url"] = df_elegiveis["External URL"]
     out["is_open_access"] = df_elegiveis["Is Open Access"]
@@ -198,6 +205,59 @@ def montar_tabela(df_elegiveis):
     out = out[COLUNAS_TODAS]
 
     return out
+
+
+# ============================================================
+# 2.5 PRESERVAR PREENCHIMENTOS MANUAIS EXISTENTES
+# ============================================================
+
+def preservar_preenchimentos_existentes(df_novo):
+    """Reescreve as colunas manuais do df_novo com os valores ja
+    preenchidos na planilha existente (casados por `id`).
+
+    Motivo: ao regerar a tabela (p.ex. apos adicionar novas colunas
+    auto-preenchidas), os valores digitados pelo revisor em colunas
+    como `revisado`, `relevancia_final`, etc. NAO podem ser perdidos.
+
+    Se a planilha ainda nao existe (primeira execucao), retorna df_novo
+    inalterado.
+    """
+    if not os.path.exists(ARQUIVO_SAIDA_XLSX):
+        print("Planilha existente nao encontrada — nada a preservar.")
+        return df_novo
+
+    try:
+        df_antigo = pd.read_excel(ARQUIVO_SAIDA_XLSX, dtype=str)
+    except Exception as e:
+        print(f"[AVISO] Nao foi possivel ler a planilha existente ({e}). "
+              "Preenchimentos manuais NAO serao preservados.")
+        return df_novo
+
+    if "id" not in df_antigo.columns:
+        print("[AVISO] Planilha existente nao tem coluna 'id'. Nada a preservar.")
+        return df_novo
+
+    colunas_preservar = [c for c in COLUNAS_MANUAIS if c in df_antigo.columns]
+    antigos = (
+        df_antigo[["id"] + colunas_preservar]
+        .dropna(subset=["id"])
+        .set_index("id")
+    )
+
+    total_preservados = 0
+    for col in colunas_preservar:
+        mapa = antigos[col].dropna()
+        mapa = mapa[mapa.astype(str).str.strip() != ""]
+        if mapa.empty:
+            continue
+        mask = df_novo["id"].isin(mapa.index)
+        df_novo.loc[mask, col] = df_novo.loc[mask, "id"].map(mapa)
+        preservados_col = int(mask.sum())
+        total_preservados += preservados_col
+        print(f"  Preservados {preservados_col:>3} valores em '{col}'")
+
+    print(f"Total de valores manuais preservados: {total_preservados}")
+    return df_novo
 
 
 # ============================================================
@@ -252,7 +312,8 @@ def exportar_xlsx(df):
     # Largura das colunas
     larguras = {
         "id": 22, "titulo": 50, "autores_completo": 40,
-        "ano": 8, "venue": 30, "publication_type": 18,
+        "ano": 8, "source_title": 30, "publication_type": 18,
+        "fields_of_study": 32, "abstract": 80,
         "doi": 28, "url": 30,
         "is_open_access": 12, "citing_works": 10, "citacoes_por_ano": 12,
         "tipo_problema_auto": 22,
@@ -314,6 +375,7 @@ def imprimir_resumo(df):
 def main():
     elegiveis = carregar_e_filtrar()
     tabela = montar_tabela(elegiveis)
+    tabela = preservar_preenchimentos_existentes(tabela)
     exportar_csv(tabela)
     exportar_xlsx(tabela)
     imprimir_resumo(tabela)
